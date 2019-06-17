@@ -4,8 +4,8 @@ spring:
     hikari:
       username: root
       password: root123
-      # >= 8.0: com.mysql.cj.jdbc.Driver
-      # < 8.0: com.mysql.jdbc.Driver
+      # >= 6.x: com.mysql.cj.jdbc.Driver
+      # <= 5.x: com.mysql.jdbc.Driver
       driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
