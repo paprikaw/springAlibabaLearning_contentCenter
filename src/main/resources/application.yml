@@ -14,6 +14,7 @@ spring:
         # 指定nacos server的地址
         server-addr: localhost:8848
         cluster-name: BJ
+        # namespace: 56116141-d837-4d15-8842-94e153bb6cfb
   application:
     # 服务名称尽量用-，不要用_，不要用特殊字符
     name: content-center
