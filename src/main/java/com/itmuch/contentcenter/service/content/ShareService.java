@@ -4,26 +4,21 @@ import com.itmuch.contentcenter.dao.content.ShareMapper;
 import com.itmuch.contentcenter.domain.dto.content.ShareDTO;
 import com.itmuch.contentcenter.domain.dto.user.UserDTO;
 import com.itmuch.contentcenter.domain.entity.content.Share;
+import com.itmuch.contentcenter.feignclient.UserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ShareService {
     private final ShareMapper shareMapper;
-    private final RestTemplate restTemplate;
+    private final UserCenterFeignClient userCenterFeignClient;
 
     public ShareDTO findById(Integer id) {
         // 获取分享详情
@@ -35,10 +30,7 @@ public class ShareService {
         // 2. 复杂的url难以维护：https://user-center/s?ie={ie}&f={f}&rsv_bp=1&rsv_idx=1&tn=baidu&wd=a&rsv_pq=c86459bd002cfbaa&rsv_t=edb19hb%2BvO%2BTySu8dtmbl%2F9dCK%2FIgdyUX%2BxuFYuE0G08aHH5FkeP3n3BXxw&rqlang=cn&rsv_enter=1&rsv_sug3=1&rsv_sug2=0&inputT=611&rsv_sug4=611
         // 3. 难以相应需求的变化，变化很没有幸福感
         // 4. 编程体验不统一
-        UserDTO userDTO = this.restTemplate.getForObject(
-            "http://user-center/users/{userId}",
-            UserDTO.class, userId
-        );
+        UserDTO userDTO = this.userCenterFeignClient.findById(userId);
 
         ShareDTO shareDTO = new ShareDTO();
         // 消息的装配
