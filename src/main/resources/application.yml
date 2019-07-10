@@ -15,6 +15,10 @@ spring:
         server-addr: localhost:8848
         cluster-name: BJ
         # namespace: 56116141-d837-4d15-8842-94e153bb6cfb
+    sentinel:
+      transport:
+        # 指定sentinel 控制台的地址
+        dashboard: localhost:8080
   application:
     # 服务名称尽量用-，不要用_，不要用特殊字符
     name: content-center
