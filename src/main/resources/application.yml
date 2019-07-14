@@ -60,3 +60,7 @@ management:
     web:
       exposure:
         include: '*'
+resttemplate:
+  sentinel:
+    # 设置成false，表示关闭@SentinelRestTemplate注解
+    enabled: true
