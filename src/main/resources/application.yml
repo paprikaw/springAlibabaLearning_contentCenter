@@ -43,6 +43,9 @@ logging:
     com.itmuch.contentcenter.feignclient.UserCenterFeignClient: debug
 
 feign:
+  sentinel:
+    # 为feign整合sentinel
+    enabled: true
   client:
     config:
       # 全局配置
