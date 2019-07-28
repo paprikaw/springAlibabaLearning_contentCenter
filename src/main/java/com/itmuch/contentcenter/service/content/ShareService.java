@@ -72,6 +72,8 @@ public class ShareService {
 
         // 3. 如果是PASS，那么为发布人添加积分
         // 异步执行
-        userCenterFeignClient.addBonus(id, 500);
+        // userCenterFeignClient.addBonus(id, 500);
+        return share;
     }
 }
+
