@@ -3,11 +3,13 @@ package com.itmuch.contentcenter.service.content;
 import com.itmuch.contentcenter.dao.content.ShareMapper;
 import com.itmuch.contentcenter.domain.dto.content.ShareAuditDTO;
 import com.itmuch.contentcenter.domain.dto.content.ShareDTO;
+import com.itmuch.contentcenter.domain.dto.messaging.UserAddBonusMsgDTO;
 import com.itmuch.contentcenter.domain.dto.user.UserDTO;
 import com.itmuch.contentcenter.domain.entity.content.Share;
 import com.itmuch.contentcenter.feignclient.UserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.Objects;
 public class ShareService {
     private final ShareMapper shareMapper;
     private final UserCenterFeignClient userCenterFeignClient;
+    private final RocketMQTemplate rocketMQTemplate;
 
     public ShareDTO findById(Integer id) {
         // 获取分享详情
@@ -60,19 +63,24 @@ public class ShareService {
     public Share auditById(Integer id, ShareAuditDTO auditDTO) {
         // 1. 查询share是否存在，不存在或者当前的audit_status != NOT_YET，那么抛异常
         Share share = this.shareMapper.selectByPrimaryKey(id);
-        if(share== null) {
+        if (share == null) {
             throw new IllegalArgumentException("参数非法！该分享不存在！");
         }
-        if(!Objects.equals("NOT_YET", share.getAuditStatus())) {
+        if (!Objects.equals("NOT_YET", share.getAuditStatus())) {
             throw new IllegalArgumentException("参数非法！该分享已审核通过或审核不通过！");
         }
         // 2. 审核资源，将状态设为PASS/REJECT
         share.setAuditStatus(auditDTO.getAuditStatusEnum().toString());
         this.shareMapper.updateByPrimaryKey(share);
 
-        // 3. 如果是PASS，那么为发布人添加积分
-        // 异步执行
-        // userCenterFeignClient.addBonus(id, 500);
+        // 3. 如果是PASS，那么发送消息给rocketmq，让用户中心去消费，并为发布人添加积分
+        this.rocketMQTemplate.convertAndSend(
+            "add-bonus",
+            UserAddBonusMsgDTO.builder()
+                .userId(share.getUserId())
+                .bonus(50)
+                .build()
+        );
         return share;
     }
 }
