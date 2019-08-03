@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
@@ -60,6 +61,7 @@ public class ShareService {
         System.out.println(forEntity.getStatusCode());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Share auditById(Integer id, ShareAuditDTO auditDTO) {
         // 1. 查询share是否存在，不存在或者当前的audit_status != NOT_YET，那么抛异常
         Share share = this.shareMapper.selectByPrimaryKey(id);
@@ -81,6 +83,9 @@ public class ShareService {
                 .bonus(50)
                 .build()
         );
+
+        // 4. 把share写到缓存
+
         return share;
     }
 }
