@@ -14,6 +14,7 @@ import com.itmuch.contentcenter.domain.dto.user.UserDTO;
 import com.itmuch.contentcenter.domain.entity.content.Share;
 import com.itmuch.contentcenter.feignclient.TestBaiduFeignClient;
 import com.itmuch.contentcenter.feignclient.TestUserCenterFeignClient;
+import com.itmuch.contentcenter.rocketmq.MySource;
 import com.itmuch.contentcenter.sentineltest.TestControllerBlockHandlerClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -206,6 +207,20 @@ public class TestController {
     @GetMapping("/test-stream")
     public String testStream() {
         this.source.output()
+            .send(
+                MessageBuilder
+                    .withPayload("消息体")
+                    .build()
+            );
+        return "success";
+    }
+
+    @Autowired
+    private MySource mySource;
+
+    @GetMapping("/test-stream-2")
+    public String testStream2() {
+        this.mySource.output()
             .send(
                 MessageBuilder
                     .withPayload("消息体")
