@@ -22,6 +22,14 @@ spring:
       transport:
         # 指定sentinel 控制台的地址
         dashboard: localhost:8080
+    stream:
+      rocketmq:
+        binder:
+          name-server: 127.0.0.1:9876
+      bindings:
+        output:
+          # 用来指定topic
+          destination: stream-test-topic
   application:
     # 服务名称尽量用-，不要用_，不要用特殊字符
     name: content-center
@@ -41,7 +49,7 @@ ribbon:
 logging:
   level:
     com.itmuch.contentcenter.feignclient.UserCenterFeignClient: debug
-
+    com.alibaba.nacos: error
 feign:
   sentinel:
 
