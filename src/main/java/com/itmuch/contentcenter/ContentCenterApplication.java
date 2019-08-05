@@ -1,7 +1,5 @@
 package com.itmuch.contentcenter;
 
-import com.itmuch.contentcenter.configuration.GlobalFeignConfiguration;
-import com.itmuch.contentcenter.rocketmq.MySource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.alibaba.sentinel.annotation.SentinelRestTemplate;
@@ -17,7 +15,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan("com.itmuch.contentcenter.dao")
 @SpringBootApplication
 @EnableFeignClients// (defaultConfiguration = GlobalFeignConfiguration.class)
-@EnableBinding({Source.class, MySource.class})
+@EnableBinding({Source.class})
 public class ContentCenterApplication {
 
     public static void main(String[] args) {
